@@ -1,3 +1,17 @@
+.gitignore
+drafts
+template
+auto
+entropy.tex
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*~
+paper.r
+
+
 # History files
 .Rhistory
 .Rapp.history
