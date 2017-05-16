@@ -104,9 +104,9 @@ opts_chunk$set(echo=FALSE, message=FALSE)
 
 
 <<>>=
-load(file="~/scratch/uncertainty/evi/hiv/sam.rda")
-load(file="~/scratch/uncertainty/evi/hiv/samgudnd.rda")
-load(file="~/scratch/uncertainty/evi/hiv/samnogu.rda")
+load(file="sam.rda")
+load(file="samgudnd.rda")
+load(file="samnogu.rda")
 source("plots.r")
 @ 
 
