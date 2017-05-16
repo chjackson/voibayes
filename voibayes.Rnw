@@ -69,7 +69,7 @@ opts_chunk$set(echo=FALSE, message=FALSE)
 {
   \title{\bf Value of Information: Sensitivity Analysis and Research Design in Bayesian Evidence Synthesis}
   \author{Christopher Jackson, Anne Presanis, Stefano Conti, Daniela De Angelis\thanks{
-    This work was funded by the Medical Research Council, grant code U105260566}\hspace{.2cm}\\
+    This work was funded by the Medical Research Council, grant code U105260566.  Thanks to Public Health England for providing the data.}\hspace{.2cm}\\
     MRC Biostatistics Unit, University of Cambridge; NHS England\\
   }
   \maketitle
@@ -494,10 +494,10 @@ We construct a Bayesian model to link these quantities with the available eviden
 %% FOR CUTTING UNDIAGNOSED - remove arrows from piun, piop to pinodeltag
 
 <<>>=
-mpesdat <- list(obs_natsal = c(824, 7, 38, 10),
-                obs_gumcad = c(35121, 34187, 30570, 29529, 855),
-                obs_uagum = c(85, 4),
-                obs_gmshs = structure(c(493, 452, 20, 20), .Dim = c(2L, 2L)))
+load(file="mpesdata.rda")
+soph <- mpesdat$obs_sophid
+handd <- mpesdat$obs_handd
+ons <- mpesdat$obs_ons
 nat <- mpesdat$obs_natsal
 gc <- mpesdat$obs_gumcad
 ga <- mpesdat$obs_uagum
@@ -515,17 +515,17 @@ Individuals diagnosed with HIV and accessing care in the UK are
 reported to the SOPHID registry (Surveillance of Prevalent HIV
 Infections Diagnosed) \citep{PHEreport2016}.  From SOPHID we
 obtain the reported number of HIV diagnoses for MSM, $y_M \sim
-Po(\mu_M)$.  We assume a small reporting bias of unknown direction,
+Po(\mu_M)$, with $y_M=\Sexpr{soph[2]}$. We assume some reporting bias of unknown direction,
 through $\log(\mu_M) = a_S + \log(\mu_D)$ where $\exp(a_S) \sim
 N(1,0.018^2)$, giving a prior $90\%$ interval of about $(-3\%,3\%)$
 for the adjustment to the number of MSM HIV diagnoses $\mu_M$.  After
-this adjustment, $\mu_{D} = \mu_{DG} + \mu_{DN} + \mu_{DP}$ is the
+adjustment, $\mu_{D} = \mu_{DG} + \mu_{DN} + \mu_{DP}$ is the
 expected number of diagnoses among MSM, summed from the expected
 numbers of diagnoses among GMSM, NGMSM and PMSM respectively.
 The following sections explain where $\mu_{DG},\mu_{DN}$
 come from; $\mu_{DP}$ is modelled using similar techniques. 
 
-Since SOPHID does not record GUM clinic attendance, to strengthen the evidence on diagnosed prevalence in GMSM we include data from the HIV and AIDS New Diagnoses Database (HANDD) \citep{PHEreport2016}, recording how many of the $y_{M}$ prevalent diagnosed MSM were newly diagnosed in 2012 and reported to have been diagnosed initially in a GUM clinic. These new diagnoses, denoted $y_{H}$, are modelled as $y_{H} \sim Bin(y_{M}, p_{H})$, where $p_H$ is assumed to be a lower bound for the proportion of prevalent diagnosed MSM who have attended a GUM clinic in 2012. This bound is expressed through $p_{H} = a_H \mu_{DG} / \mu_{D}$, where $a_H \sim U(0,1)$ is the unknown probability that a prevalent diagnosed MSM who has attended a GUM clinic in 2012 was newly diagnosed that year. $y_H$ therefore gives us additional indirect information on $\mu_{DG}$, the number of prevalent diagnosed GMSM.
+Since SOPHID does not record GUM clinic attendance, to strengthen the evidence on diagnosed prevalence in GMSM we include data from the HIV and AIDS New Diagnoses Database (HANDD) \citep{PHEreport2016}, recording how many of the $y_{M}$ prevalent diagnosed MSM were newly diagnosed in 2012 and reported to have been diagnosed initially in a GUM clinic. These new diagnoses, $y_{H}=\Sexpr{handd[1]}$, are modelled as $y_{H} \sim Bin(y_{M}, p_{H})$, where $p_H$ is assumed to be a lower bound for the proportion of prevalent diagnosed MSM who have attended a GUM clinic in 2012. This bound is expressed through $p_{H} = a_H \mu_{DG} / \mu_{D}$, where $a_H \sim U(0,1)$ is the unknown probability that a prevalent diagnosed MSM who has attended a GUM clinic in 2012 was newly diagnosed that year. $y_H$ therefore gives us additional indirect information on $\mu_{DG}$, the number of prevalent diagnosed GMSM.
 
 The number of \emph{diagnosed} infections is related to the total
 number of infections in each group $g=G,N$ as $\mu_{Dg} = \delta_g
