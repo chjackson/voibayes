@@ -135,3 +135,36 @@ round(cbind(evsi.gm, evsi.gm.se), 2)
 evsi.gm.se / evsi.gm # all < 1% of evsi
 
 }
+
+## for RSS presentation 
+
+ys <- seq(200, 330, by=10)
+options(scipen=10000)
+labs <- eval(parse(text=paste0("expression(", paste0(ys,"^2",collapse=","), ")")))
+
+g <- ggplot(data=NULL, aes(x=ns, y=yvar-evsi.ga)) +
+  geom_point(col="red",alpha=0) + # invisible plot so x axis scale is shown 
+  geom_text(data=NULL, aes(x=10, y=yvar+(diff(range(ys))/3)^2), label="Original posterior variance", col="blue", hjust=0, vjust=0) + 
+  geom_hline(aes(yintercept=yvar), col="black") + 
+  scale_x_continuous(trans="log", breaks=ns) +
+  scale_y_continuous(breaks=ys^2, limits=range(ys^2), labels=labs) +
+  xlab(expression(paste("Planned additional size of survey ", bold(y)))) +
+  ylab(expression(paste("Variance of ", mu[U]))) 
+
+gga <- g +
+  geom_point(col="red") +
+  geom_line(col="red") +
+  geom_hline(aes(yintercept=yvar-evppi.ga), col="red", linetype=2) +
+  geom_text(data=NULL, aes(x=10, y=yvar-evppi.ga), label="Expected~variance~knowing~pi^{(GA)}", parse=TRUE, col="red", hjust=0, vjust=2) +
+  annotate("text", x=1000, y=300^2, label="GUM Anon data", col="red", hjust=0)
+
+ggm <- gga + 
+  geom_point(data=NULL, aes(x=ns, y=yvar-evsi.gm), col="blue") +
+  geom_line(data=NULL, aes(x=ns, y=yvar-evsi.gm), col="blue") +
+  annotate("text", x=1000, y=250^2, label="GMSHS data", col="blue", hjust=0) +
+  geom_hline(aes(yintercept=yvar-evppi.gm), col="blue", linetype=2) +
+  geom_text(data=NULL, aes(x=10, y=yvar-evppi.gm), label=bquote("Expected~variance~knowing~or^{(GM)}"), parse=TRUE, col="blue", hjust=0, vjust=2) 
+
+pdf("../../../pres/rss17/evsi-1.pdf"); g; dev.off()
+pdf("../../../pres/rss17/evsi-2.pdf"); gga; dev.off()
+pdf("../../../pres/rss17/evsi-3.pdf"); ggm; dev.off()

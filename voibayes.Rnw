@@ -65,17 +65,17 @@ opts_chunk$set(echo=FALSE, message=FALSE)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\if1\blind
+\if0\blind
 {
   \title{\bf Value of Information: Sensitivity Analysis and Research Design in Bayesian Evidence Synthesis}
   \author{Christopher Jackson, Anne Presanis, Stefano Conti, Daniela De Angelis\thanks{
-    This work was funded by the Medical Research Council, grant code U105260566.  Thanks to Public Health England for providing the data.}\hspace{.2cm}\\
+    This work was funded by the Medical Research Council, grant code U105260566, and from Public Health England (funding DDA and SC).  The authors are grateful to the HIV department of Public Health England for providing the data and permission to use the example, and to the NATSAL team for providing data.}\hspace{.2cm}\\
     MRC Biostatistics Unit, University of Cambridge; NHS England\\
   }
   \maketitle
 } \fi
 
-\if0\blind
+\if1\blind
 {
   \bigskip
   \bigskip
@@ -129,9 +129,6 @@ Bayesian modelling is a natural paradigm for decision making, in the presence of
 Annual estimation of HIV prevalence in the United Kingdom has, for several years, been based on a Bayesian synthesis of evidence from various surveillance systems and other surveys \citep{goubar2008estimates,Presanis2010,DeAngelis2014a,PHEreport2016}.  This is an example of a class of problems called \emph{multiparameter evidence synthesis} \citep[e.g.][]{ades:sutton}, where the quantities of interest are not directly observable, but can be inferred from multiple indirect data sources linked through a network of model assumptions that can be expressed as a directed acyclic graph.   Markov Chain Monte Carlo is typically required to estimate the posterior. The model is typically used to inform health policies, and in this context it is important to be able to assess sensitivity to uncertain model inputs and to indicate how the model could be strengthened with further data. 
 
 These dual aims can be achieved with \emph{value of information} (VoI) analysis, a decision-theoretic framework based on expected reductions in loss from future information.  The concepts of VoI were first set out in detail by \citet{raiffa:schlaifer}, while \citet{parmigiani2009decision} give a more recent overview.   The expected value of \emph{partial perfect information} (EVPPI) is the expected reduction in loss if the exact value of a particular parameter or parameters $\bm\theta_0$ were learnt, also interpreted as the amount of decision uncertainty that is due to $\bm\theta_0$.  The expected value of \emph{sample information} (EVSI) is the expected reduction in loss from a study of a specific design.  These concepts have been applied in various forms in three distinct areas: health economics, computer modelling and Bayesian design.
-
-%% We present a unifying framework for VoI and extend in multiparameter evidence synthesis. 
-% {\color{blue} We develop VoI tools for general multiparameter evidence synthesis, building on and bringing together three strands of literature: in health economics, computer modelling and Bayesian design.}
 
 In health economic modelling, there is a large literature on calculation and application of VoI, see, e.g. \citet{felli1998sensitivity,willan2005value,claxton2006using,welton2008research}.  The model output in this case is the expected net benefit of each alternative policy, a known deterministic function $g(\bm\theta)$ of uncertain inputs $\bm\theta$, and the decision problem is the choice of policy that minimises $g(\bm\theta)$.  In computer modelling, see, e.g. \citet{oakley:ohagan:psa} and \citet{saltelli2004sensitivity}, the influence of a particular element $\bm\theta_0$ of $\bm\theta$ is calculated as the expected reduction in $\var(g(\bm\theta))$, if we were to learn $\bm\theta_0$ exactly.  This is equivalent to the EVPPI for $\bm\theta_0$ under a decision problem defined as point estimation of $g(\bm\theta)$ with quadratic loss \citep{oakley:ohagan:psa}.   The decision-theoretic view of Bayesian experimental design also has a long history, see, e.g. \citet{lindley1956measure,bernardo:smith,chaloner1995bayesian,berger2013statistical}, and a recent review of the computational challenges by \citet{ryan2015review}. 
 
@@ -452,7 +449,7 @@ E_{\bm\phi} [  E_{\bm\theta|\bm\phi} (L(d^*_{\bm\phi},\bm\theta)) ] = E_{\bm\phi
 \]
 Our more general formulation of this algorithm, which expresses the optimal loss as $h(E(\bm\alpha))$, can be used for point estimation problems.  For estimation of a scalar $\alpha$ with quadratic loss, $h(E_{\alpha}(\alpha)) = E[(\alpha - E_\alpha(\alpha))^2] = \var(\alpha)$.  We estimate $\var(\alpha|\bm\phi^{(k)})$ by the squared residual $(\alpha - \hat g(\bm\phi^{(k)}))^2$, substitute this for $h(\hat g(\bm\phi^{(k)}))$ and estimate $E_{\bm\phi}\left[\var_{\alpha|\bm\phi}(\alpha | \bm\phi)\right]$ as the mean, over $k$, of the squared residuals.  Equivalently we can estimate $\var(\theta) - E_{\bm\phi}\left[\var_{\alpha|\bm\phi}(\alpha|\bm\phi)\right] = \var_{\bm\phi}(E_{\alpha|\bm\phi}(\alpha|\bm\phi))$ as the variance, over $k$, of the fitted values.  Similarly, for vector $\bm\alpha$ and loss functions based on $\cov(\bm\alpha)$, we can fit regressions to get the marginal mean for each component $\alpha_d$, and calculate the empirical covariance matrix of the residuals.
 
-Several methods of nonparametric regression have been suggested.  For small $p$, \citet{strong:oakley:multievppi} used generalized additive models, with tensor products of spline smoothers to represent interactions between different components of $\bm\phi$.  Where $\bm\phi$ included about $p=5$ or more components, Gaussian process regression was recommended as a more efficient way of modelling interactions, though the resulting matrix computations rapidly become impractical as the MCMC sample size $K$ increases.  \citet{heath2015efficient} developed an integrated nested Laplace approximation for fitting Gaussian processes more efficiently in this context where $p>=2$.  For the application in Section~\ref{sec:hiv} (with $K=\Sexpr{nrow(sam)}$, $p\leq 3$), we have found multivariate adaptive regression splines~\citep{friedman1991multivariate} via the \emph{earth} R package~\citep{earthpackage} to be more efficient.    Standard errors for the EVPPI estimates can be calculated in general by simulating from the asymptotic normal distribution of the regression coefficients \citep{mandel:simci}.
+Several methods of nonparametric regression have been suggested.  For small $p$, \citet{strong:oakley:multievppi} used generalized additive models, with tensor products of spline smoothers to represent interactions between different components of $\bm\phi$.  Where $\bm\phi$ included about $p=5$ or more components, Gaussian process regression was recommended as a more efficient way of modelling interactions, though the resulting matrix computations rapidly become impractical as the MCMC sample size $K$ increases.  \citet{heath2015efficient} developed an integrated nested Laplace approximation for fitting Gaussian processes more efficiently in this context where $p\geq 2$.  For the application in Section~\ref{sec:hiv} (with $K=\Sexpr{nrow(sam)}$, $p\leq 3$), we have found multivariate adaptive regression splines~\citep{friedman1991multivariate} via the \emph{earth} R package~\citep{earthpackage} to be more efficient.    Standard errors for the EVPPI estimates can be calculated in general by simulating from the asymptotic normal distribution of the regression coefficients \citep{mandel:simci}.
 
 For expected losses which are functions of the median or other quantiles, such as absolute error loss, a similar method based on nonparametric quantile regression could be devised.   
 
@@ -512,20 +509,21 @@ The total male population of London, $\mu_{pop}$, is informed by published data 
 \subsection{Registry of diagnosed infections and diagnosed prevalence}
 %% SOPHID updated quarterly
 Individuals diagnosed with HIV and accessing care in the UK are
-reported to the SOPHID registry (Surveillance of Prevalent HIV
-Infections Diagnosed) \citep{PHEreport2016}.  From SOPHID we
-obtain the reported number of HIV diagnoses for MSM, $y_M \sim
-Po(\mu_M)$, with $y_M=\Sexpr{soph[2]}$. We assume some reporting bias of unknown direction,
-through $\log(\mu_M) = a_S + \log(\mu_D)$ where $\exp(a_S) \sim
-N(1,0.018^2)$, giving a prior $90\%$ interval of about $(-3\%,3\%)$
-for the adjustment to the number of MSM HIV diagnoses $\mu_M$.  After
-adjustment, $\mu_{D} = \mu_{DG} + \mu_{DN} + \mu_{DP}$ is the
-expected number of diagnoses among MSM, summed from the expected
-numbers of diagnoses among GMSM, NGMSM and PMSM respectively.
-The following sections explain where $\mu_{DG},\mu_{DN}$
-come from; $\mu_{DP}$ is modelled using similar techniques. 
+reported to the HIV and AIDS Reporting System (HARS)
+\citep{PHEreport2016}.  From the 2012 version of this dataset, known
+then as SOPHID (Surveillance of Prevalent HIV Infections Diagnosed),
+we obtain the reported number of HIV diagnoses for MSM, $y_M \sim
+Po(\mu_M)$, with $y_M=\Sexpr{soph[2]}$. We assume some reporting bias
+of unknown direction, through $\log(\mu_M) = a_S + \log(\mu_D)$ where
+$\exp(a_S) \sim N(1,0.018^2)$, giving a prior $90\%$ interval of about
+$(-3\%,3\%)$ for the adjustment to the number of MSM HIV diagnoses
+$\mu_M$.  After adjustment, $\mu_{D} = \mu_{DG} + \mu_{DN} + \mu_{DP}$
+is the expected number of diagnoses among MSM, summed from the
+expected numbers of diagnoses among GMSM, NGMSM and PMSM respectively.
+The following sections explain where $\mu_{DG},\mu_{DN}$ come from;
+$\mu_{DP}$ is modelled using similar techniques.
 
-Since SOPHID does not record GUM clinic attendance, to strengthen the evidence on diagnosed prevalence in GMSM we include data from the HIV and AIDS New Diagnoses Database (HANDD) \citep{PHEreport2016}, recording how many of the $y_{M}$ prevalent diagnosed MSM were newly diagnosed in 2012 and reported to have been diagnosed initially in a GUM clinic. These new diagnoses, $y_{H}=\Sexpr{handd[1]}$, are modelled as $y_{H} \sim Bin(y_{M}, p_{H})$, where $p_H$ is assumed to be a lower bound for the proportion of prevalent diagnosed MSM who have attended a GUM clinic in 2012. This bound is expressed through $p_{H} = a_H \mu_{DG} / \mu_{D}$, where $a_H \sim U(0,1)$ is the unknown probability that a prevalent diagnosed MSM who has attended a GUM clinic in 2012 was newly diagnosed that year. $y_H$ therefore gives us additional indirect information on $\mu_{DG}$, the number of prevalent diagnosed GMSM.
+Since SOPHID did not record GUM clinic attendance, to strengthen the evidence on diagnosed prevalence in GMSM we include data from the HIV and AIDS New Diagnoses and Deaths Database (HANDD, which is now also superseded by HARS) \citep{PHEreport2016}, recording how many of the $y_{M}$ prevalent diagnosed MSM were newly diagnosed in 2012 and reported to have been diagnosed initially in a GUM clinic. These new diagnoses, $y_{H}=\Sexpr{handd[1]}$, are modelled as $y_{H} \sim Bin(y_{M}, p_{H})$, where $p_H$ is assumed to be a lower bound for the proportion of prevalent diagnosed MSM who have attended a GUM clinic in 2012. This bound is expressed through $p_{H} = a_H \mu_{DG} / \mu_{D}$, where $a_H \sim U(0,1)$ is the unknown probability that a prevalent diagnosed MSM who has attended a GUM clinic in 2012 was newly diagnosed that year. $y_H$ therefore gives us additional indirect information on $\mu_{DG}$, the number of prevalent diagnosed GMSM.
 
 The number of \emph{diagnosed} infections is related to the total
 number of infections in each group $g=G,N$ as $\mu_{Dg} = \delta_g
@@ -588,12 +586,12 @@ The results presented in section~\ref{sec:results} are for the above model assum
 \item[(a) Undiagnosed prevalence from GUM Anon only]
 To avoid the strong prior assumptions on prevalence among those not offered a test or refusing a test, which are necessary to use the GUMCAD data to infer $\pinodelta_g$, we could infer $\pinodelta_g$ from GUM Anon alone.  To construct this model, we replace equation~(\ref{eq:gumcad:undiag}) by a $U(0,1)$ prior on $\pinodelta_g$, although the GUMCAD data are still used to estimate the parameters $\pi^{(GD)}$ and $\gamma_1$ relating the prevalence in GUM Anon to $\pinodelta_g$.
 \item[(b) GUMCAD also informs diagnosed prevalence]
-  Instead of being inferred indirectly though the graph, the diagnosed prevalence can be modelled directly as 
+  Instead of being inferred indirectly through the graph, the diagnosed prevalence can be modelled directly as 
   \begin{equation}
     \label{eq:gumcad:diag}
     \pidelta_G = (1 - \gamma_1) + \gamma_1\gamma_2\gamma_3\gamma_4,     
   \end{equation}
-where $1-\gamma_1$ is the probability of a previous diagnosis, and $\gamma_1\gamma_2\gamma_3\gamma_4$ is the probability of newly-diagnosed infection, in GUMCAD.  This is not done in the base case due to concerns about inconsistencies in reporting of diagnoses between GUMCAD and SOPHID/HANDD. 
+where $1-\gamma_1$ is the probability of a previous diagnosis, and $\gamma_1\gamma_2\gamma_3\gamma_4$ is the probability of a new diagnosis, in GUMCAD.  This is not done in the base case due to concerns about inconsistencies in reporting between GUMCAD and SOPHID/HANDD. 
 \end{description}
 
 
