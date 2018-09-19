@@ -28,8 +28,8 @@ opts_chunk$set(echo=FALSE, message=FALSE)
 \DeclareMathOperator*{\argmax}{arg\,max} 
 
 %\pdfminorversion=4
-% NOTE: To produce blinded version, replace "1" with "0" below.
-\newcommand{\blind}{0}
+% NOTE: To produce blinded version, replace "0" with "1" below.
+\newcommand{\blind}{1}
 
 % DON'T change margins - should be 1 inch all around.
 \addtolength{\oddsidemargin}{-.5in}%
@@ -61,7 +61,7 @@ opts_chunk$set(echo=FALSE, message=FALSE)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\if1\blind
+\if0\blind
 {
   \title{\bf Value of Information: Sensitivity Analysis and Research Design in Bayesian Evidence Synthesis\\~\\
   Supplementary figures}
@@ -72,7 +72,7 @@ opts_chunk$set(echo=FALSE, message=FALSE)
   \maketitle
 } \fi
 
-\if0\blind
+\if1\blind
 {
   \bigskip
   \bigskip
