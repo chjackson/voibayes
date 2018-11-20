@@ -1,4 +1,8 @@
-# source("enbs.r")
+## Plot to illustrate Expected Net Benefit of Sampling, in manuscript.
+
+source("enbs.r")
+
+library(gridExtra)
 
 p1 <- p +
   geom_line(aes(y=ec), col="red") +

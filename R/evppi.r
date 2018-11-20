@@ -2,6 +2,9 @@ library(rstan)
 library(earth)
 library(ggplot2)
 
+## Model parameters and their plot labels
+
+## 1) Base case model 
 phimat <- c("mean_obs_ons" = expression(paste("Male population size: ",mu[pop])),
             "rho[1]" = expression(paste("Prob. man is GMSM: ",rho[G])),
             "rho[2]" = expression(paste("Prob. man is NGMSM: ", rho[N])),
@@ -20,6 +23,7 @@ phimat <- c("mean_obs_ons" = expression(paste("Male population size: ",mu[pop]))
             )
 phi <- names(phimat)
 
+## 2) Alternative assumption a): undiagnosed prevalence from GUM Anon only
 phimat.nogu <- c("mean_obs_ons" = expression(paste("Male population size: ",mu[pop])),
             "rho[1]" = expression(paste("Prob. man is GMSM: ",rho[G])),
             "rho[2]" = expression(paste("Prob. man is NGMSM: ", rho[N])),
@@ -35,6 +39,7 @@ phimat.nogu <- c("mean_obs_ons" = expression(paste("Male population size: ",mu[p
             )
 phi.nogu <- names(phimat.nogu)
 
+## Alternative model outputs of interest, following notation in manuscript
 alphamat <- c("pidelta[1]"= expression((pi*delta)[G]),
               "pidelta[2]"= expression((pi*delta)[N]),
               "pinodelta[1]" = expression(bar((pi*delta))[G]),
@@ -46,6 +51,7 @@ alphamat <- c("pidelta[1]"= expression((pi*delta)[G]),
               "mu[4]"=expression(mu))
 alpha <- names(alphamat)
 
+## Compute EVPPI by nonparametric regression 
 evppi <- function(sam, phi) { 
     pe <- matrix(nrow=length(phi), ncol=length(alpha))
     rownames(pe) <- phi
@@ -61,6 +67,7 @@ evppi <- function(sam, phi) {
     pe
 }
 
+## Plot EVPPI values as shaded grid by input parameter (rows) and output (columns)
 evppi.plot <- function(pe, phi, phimat) { 
     pt <- data.frame(value=as.vector(pe),
                      input=factor(rep(rownames(pe), ncol(pe)), levels=rev(phi)),
@@ -80,23 +87,10 @@ pe <- evppi(sam, phi)
 penogu <- evppi(samnogu, phi.nogu)
 pegudnd <- evppi(samgudnd, phi)
 save(pe, penogu, pegudnd, file="evppi.rda")
-load(file="evppi.rda")
 
-if (0) { 
-pdf("../../write/evi/evppi.pdf")
-evppi.plot(pe, phi, phimat) 
-dev.off()
-
-pdf("../../write/evi/evppi-nogu.pdf")
-evppi.plot(penogu, phi.nogu, phimat.nogu)
-dev.off()
-
-pdf("../../write/evi/evppi-gudnd.pdf")
-evppi.plot(pegudnd, phi, phimat)
-dev.off()
-}
-
-## standard errors need an extra cross validation step: takes time.
+## Compute standard errors of EVPPI resulting from uncertainty about the nonparametric regression coefficients. 
+## Needs an expensive cross-validation step, so don't compute by default
+se <- FALSE
 
 evppi.se <- function(sam, phi) { 
     pe <- matrix(nrow=length(phi), ncol=length(alpha))
@@ -118,6 +112,6 @@ evppi.se <- function(sam, phi) {
     pe
 }
 
-if (0) {
-    pese <- evppi.se(sam, phi) # negligible 
+if (se) {
+    pese <- evppi.se(sam, phi) # SEs are negligible in context
 }

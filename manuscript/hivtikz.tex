@@ -1,0 +1,248 @@
+%% for headers in boxes
+\tikzset{
+  header node/.style = {
+    fill          = white,
+    draw},
+  header/.style = {%
+    inner ysep = +2.5em,
+    append after command = {
+      \pgfextra{\let\TikZlastnode\tikzlastnode}
+      node [header node, rounded corners, inner ysep=+0.5em, align=center, text width=5.8cm] (header-\TikZlastnode) at (\TikZlastnode.north) {#1}
+    }
+  }
+}
+
+%\begin{document}
+
+\resizebox{\textwidth}{!}{%
+\begin{tikzpicture}[node distance=0.5cm]
+
+    %%% NATSAL, ONS
+    \node (malepopexp) [founder] {$\mu_{pop}$}; %% ANCHOR
+    \node (malepopobs) [data, below=of malepopexp] {$y_{pop}$};
+    \node (popng)   [func,   right=of malepopobs] {$r_N$};
+    \node (natsalng)[data, right=of popng] {$y_N$};
+    \coordinate (popng_natsalng) at ($(popng.north)!0.5!(natsalng.north)$);
+    \node (rhong)   [founder, above=of popng_natsalng] {$\rho_N$};
+    \node (popg)    [func,   right=of natsalng] {$r_G$};
+    \node (natsalg) [data,    right=of popg] {$y_G$};
+    \coordinate (popg_natsalg) at ($(popg.north)!0.5!(natsalg.north)$);
+    \node (rhog)    [founder, above=of popg_natsalg] {$\rho_G$};
+    \coordinate (natsalng_popg_n) at ($(natsalng.north)!0.5!(popg.north)$);
+    \coordinate (natsalng_popg_s) at ($(natsalng.south)!0.5!(popg.south)$);
+%    \node (natsaldenom)    [data, below=of natsalng_popg_s] {$y_{NAT}$};
+    \draw[->] (malepopexp) -- (malepopobs);
+    \draw[->] (malepopexp) -- (popng);
+    \draw[->] (rhog) -- (natsalg);
+    \draw[->] (rhog) -- (popg);
+    \draw[->] (rhong) -- (natsalng);
+    \draw[->] (rhong) -- (popng);
+%    \draw[->] (natsaldenom) -- (natsalg);
+%    \draw[->] (natsaldenom) -- (natsalng);
+    \begin{scope}[on background layer] %% so plate colour goes under nodes
+    \node[datagroup, header={Subgroup membership\\(NATSAL, ONS)}, fit={(malepopexp) (natsalg) (popg) }] (NATSALplate) {};
+    \end{scope}
+    \begin{scope}[on background layer] %% so arrow goes under other nodes
+    \draw[->] (malepopexp) -- (popg);
+    \end{scope}
+
+    %%% NGMSM
+    \node (mun)  [interest, below left = 4.5cm of popng] {$\mu_N$};  %% ANCHOR
+    \draw[->] (popng) -- (mun);                                 %% LINK TO NATSAL
+    \node (mudn) [interest,    below=of mun] {$\mu_{DN}$};
+    \node (pin)       [interest, left=of mun] {$\pi_N$};
+    \node (pideltan)  [interest, below=of pin] {$\pidelta_N$};
+    \node (pinodeltan)[interest, above=of pin] {$\pinodelta_N$};
+    \node (deltan)    [func,    left=of pin]    {$\delta_N$};
+    \node (auxdeltan) [founder,  above=of deltan] {$a_{\delta N}$};
+    \node (orgmshs)   [founder,  above=of pinodeltan] {$or^{(GM)}$};
+    \node (muun) [interest,   right=of pinodeltan] {$\mu_{UN}$};
+
+%% TODO pn, pg -> or
+%% then pn, pg generate yn yg
+
+    \node (pgmg)     [founder,     left=of orgmshs]    {$p^{(GM)}_G$};
+    \node (pgmn)     [founder,     right=of orgmshs]   {$p^{(GM)}_N$};
+    \node (ygmg) [ data, above=of pgmg ] { $y^{(GM)}_G$ };
+    \node (ygmn) [ data, above=of pgmn ] { $y^{(GM)}_N$ };
+    \draw[->] (pgmg) -- (orgmshs);
+    \draw[->] (pgmn) -- (orgmshs);
+    \draw[->] (pgmg) -- (ygmg);
+    \draw[->] (pgmn) -- (ygmn);
+    \draw[->] (orgmshs) -- (pinodeltan);
+    \draw[->] (auxdeltan) -- (deltan);
+    \draw[->] (pinodeltan) -- (deltan);
+    \draw[->] (pinodeltan) -- (pin);
+    \draw[->] (deltan) -- (pin);
+    \draw[->] (deltan) -- (mudn);
+    \draw[->] (pin) -- (pideltan);
+    \draw[->] (deltan) -- (pideltan);
+    \draw[->] (pin) -- (mun);
+    \draw[->] (mun) -- (mudn);
+    \draw[->] [out=60] (mudn) to [in=-60] (muun);
+    \draw[->] (mun) -- (muun);
+
+    \begin{scope}[on background layer]
+      \node[datagroup, header=Prevalence among NGMSM; GMSHS data, fit={(orgmshs) (mudn) (ygmg) (ygmn) }] (NGMSMplate) {};
+    \end{scope}
+
+    %%% SOPHID, HANDD
+    \node (prddeltam)[ func,   right = 5cm of mudn]  { $\mu_D$ }; %% ANCHOR
+    \draw[->] (mudn) -- (prddeltam);                              %% LINK TO NGMSM
+    \node (musophm)   [ func,    below=of prddeltam ]  { $\mu_M$ };
+    \node (sophm)    [ data,     below=of musophm ]{ $y_M$ };
+
+    \node (handd)    [ data,     right=2.5cm of sophm ] {$y_H$ };
+    \node (phandd)    [ func,   above=of handd ]     {$p_H$ };
+    \draw[->] (prddeltam) -- (musophm);
+    \draw[->] (musophm) -- (sophm);
+    \draw[->] (sophm) -- (handd);
+    \draw[->] (phandd) -- (handd);
+    \draw[->] (prddeltam) -- (phandd);
+    \node (auxhandd)  [ founder, left=of phandd ]    { $a_H$ };
+    \draw[->] (auxhandd) -- (phandd);
+    \node (sophbias) [ founder,  left=of musophm ]    { $a_S$ };
+    \draw[->] (sophbias) -- (musophm);
+    \begin{scope}[on background layer]
+      \node[datagroup, header=Registry of diagnosed infections (SOPHID and HANDD), fit={(sophbias) (prddeltam) (handd) (auxhandd) (sophbias) }] (SOPHIDplate) {};
+    \end{scope}
+
+    %%% GMSM
+    \node (mudg) [interest,    right=5.5cm of prddeltam] {$\mu_{DG}$};
+    \draw[->] (mudg) -- (prddeltam);                              %% LINK TO SOPHID
+    \node (mug)  [interest, above = of mudg] {$\mu_G$};  %% LINK TO NATSAL
+    \draw[->] (popg) -- (mug);                                 %% ANCHOR
+    \node (pig)       [interest, right=of mug] {$\pi_G$};
+    \node (pideltag)  [interest, below=of pig] {$\pidelta_{G}$};
+    \node (pinodeltag)[interest, above=of pig] {$\pinodelta_{G}$};
+    \node (deltag)    [func,    right=of pideltag]    {$\delta_G$};
+    \node (auxdeltag) [founder, below=of deltag] {$a_{\delta G}$};
+    \node (muug) [interest,  above=of mug] {$\mu_{UG}$};
+    \draw[->] (mudg) -- (phandd);
+    \draw[->] (auxdeltag) -- (deltag);
+    \draw[->] (pinodeltag) -- (deltag);
+    \draw[->] (pinodeltag) -- (pig);
+    \draw[->] (deltag) -- (pig);
+    \draw[->] [out=225] (deltag) to [in=-45] (mudg);
+    \draw[->] (deltag) -- (pideltag);
+    \draw[->] (pig) -- (pideltag);
+    \draw[->] (pig) -- (mug);
+    \draw[->] (mug) -- (mudg);
+    \draw[->] [out=130] (mudg) to [in=-130] (muug);
+    \draw[->] (mug) -- (muug);
+
+    \node (piun)   [func, right=of pinodeltag] {$\pi^{(UN)}$};
+    \node (piop)   [func, below=of piun] {$\pi^{(OP)}$};
+    \node (piga)  [func, above=of pinodeltag] {$\pi^{(GA)}$};
+    \node (pigd)   [func, right=of piga] {$\pi^{(GD)}$};
+
+
+    \node (gamma1)   [founder, right=3cm of pigd] {$\gamma_1$};
+
+%    \tikzstyle{scenario}= [->, color=red, dashed, line width=2pt]
+    \tikzstyle{scenario}= [->]
+%    \draw[scenario] (pigd) -- (pideltag);
+%    \draw[scenario] [out=240] (gamma1) to [in=30] (pideltag);
+
+    \node (pigDUP)       [interest, right=of mug] {$\pi_G$};
+    \node (pinodeltagDUP)[interest, above=of pig] {$\pinodelta_{G}$};
+
+    \node (gamma2)  [founder, below=of gamma1] {$\gamma_2$};
+    \node (gamma3) [founder, below=of gamma2] {$\gamma_3$};
+    \node (gamma4)      [founder, below=of gamma3] {$\gamma_4$};
+    \node (g2)   [data, right=of gamma1] {$g_2$};
+    \node (g1)      [data, above=of g2] {$g_1$};
+    \node (g3)  [data, right=of gamma2] {$g_3$};
+    \node (g4) [data, right=of gamma3] {$g_4$};
+    \node (g5)      [data, right=of gamma4] {$g_5$};
+
+    \draw[->] (gamma1) -- (g2);
+    \draw[->] (gamma2) -- (g3);
+    \draw[->] (gamma3) -- (g4);
+    \draw[->] (gamma4) -- (g5);
+
+    \draw[->] (g1) -- (g2);
+    \draw[->] (g2) -- (g3);
+    \draw[->] (g3) -- (g4);
+    \draw[->] (g4) -- (g5);
+
+    \draw[->] [out=135] (gamma1) to [in=45] (piga);
+
+    \draw[scenario] (piun) -- (pinodeltag);
+    \draw[scenario] (piop) -- (pinodeltag);
+    \draw[->] (pinodeltag) -- (piga);
+
+    \draw[->] (gamma1) -- (piun);
+    \draw[->] (gamma2) -- (piun);
+    \draw[->] (gamma4) -- (piun);
+
+    \draw[->] (gamma1) -- (piop);
+    \draw[->] (gamma2) -- (piop);
+    \draw[->] (gamma3) -- (piop);
+    \draw[->] (gamma4) -- (piop);
+
+    \draw[->] (gamma1) -- (pigd);
+    \draw[->] (gamma2) -- (pigd);
+    \draw[->] (gamma3) -- (pigd);
+    \draw[->] (gamma4) -- (pigd);
+
+    \draw[->] (pigd) -- (piga);
+
+    \node (testbias)  [founder] at ($(piop) + (-55:3)$) {$a^{(OP)}$};
+    \draw[->] (testbias) -- (piop);
+
+    \node (offerbias)  [founder] at ($(piun) + (-55:3)$) {$a^{(UN)}$};
+    \draw[->] (offerbias) -- (piun);
+
+    \draw[->] plot [smooth] coordinates {(pinodeltag.south west) ($(pinodeltag) + (-3,-1)$) ($(pinodeltan) + (3,-1)$) ($(pinodeltan.south east) + (0.1,-0.1)$) };% to [in=-10] (pinodeltan);
+
+%} };
+
+    \draw[->] (offerbias) -- (piun);
+
+    \node (gumanon)   [data, above=of piga] {$g^{(A)}$};
+    \draw[->] (piga) -- (gumanon);
+
+    %% CHEAT DUPLICATE NODES TO HIDE ARROWS
+    \node (muugDUP) [interest, opacity=0.9, above=of mug] {$\mu_{UG}$};
+    \node (muunDUP) [interest, opacity=0.9, right=of pinodeltan] {$\mu_{UN}$};
+%    \node (pigaDUP)  [func, right=of pigu] {$\pi^{(GA)}$};
+%    \node (pigdDUP)   [func, below=of piga] {$\pi^{(GD)}$};
+    \node (piopDUP)   [func, below=of piun] {$\pi^{(OP)}$};
+
+    %% UGH
+    \tikzset{
+      header node/.style = {
+        fill          = white,
+        draw},
+      header/.style = {%
+        inner ysep = +2.5em,
+        append after command = {
+          \pgfextra{\let\TikZlastnode\tikzlastnode}
+          node [header node, rounded corners, inner ysep=+0.5em, align=center, text width=8.5cm] (header-\TikZlastnode) at (\TikZlastnode.north) {#1}
+        }
+      }
+    }
+    \begin{scope}[on background layer]
+    \node[datagroup, header={Prevalence among GMSM\\GUMCAD and GUM Anon data}, fit={(piun) (pinodeltag) (deltag) (mudg) (g1) (g5) (gumanon) (auxdeltag) }] (GMSMplate) {};
+    \end{scope}
+
+%%% GRAPH KEY
+
+    \tikzstyle{keygroup}= [draw, rectangle, rounded corners, inner sep=10pt, fill=blue!2]
+    \node (founder)  [founder] at ($(mudg) + (-75 : 4.2)$) {};
+    \node (interest) [interest, below=of founder] {};
+    \node (founder_key) [right = of founder, text width=3cm] {Founder node\\with prior};
+    \node (interest_key) [right = of interest, text width=3cm] {Model output\\of interest};
+    \node (func)  [func, right=of founder_key] {};
+    \node (data)     [data, below=of func] {};
+    \node (func_key) [right = of func] {Any other parameter};
+    \node (data_key) [right = of data] {Observed data};
+    \begin{scope}[on background layer]
+    \node[keygroup, fit={(founder) (interest) (func_key) (data_key) }, opacity=0.9] (legend_plate) {};
+    \end{scope}
+
+
+\end{tikzpicture}
+}%
+%\end{document}

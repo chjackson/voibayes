@@ -1,0 +1,14 @@
+base
+devtools
+ggplot2
+StanHeaders
+rstan
+knitr
+plotrix
+TeachingDemos
+plotmo
+earth
+denstrip
+nlme
+mgcv
+gridExtra

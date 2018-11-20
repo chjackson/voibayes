@@ -5,8 +5,8 @@
 
 # load("samnogu.rda")
 library(earth)
-library(tidyverse)
-library(gridExtra)
+library(ggplot2)
+library(mgcv)
 
 out <- "munodelta[4]"
 yvarnogu <- var(samnogu[,out])
@@ -83,11 +83,7 @@ ec <- survey_cost(ns)
 ## expected net benefit of sampling 
 enbs <- eb - ec
 
-#  scale_x_continuous(breaks = seq(0, 400, by=100), minor_breaks = seq(0, 400, by=50)) +
-#  scale_x_continuous(breaks = brks, minor_breaks = seq(0, 400, by=50))
-
 ## smooth them all as functions of sample size
-library(mgcv)
 check.fit <- FALSE
 if (check.fit){
     plot(ns, eb, type="l")
